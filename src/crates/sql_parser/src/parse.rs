@@ -1,6 +1,11 @@
-use nom::bytes::complete::take_while1;
-use nom::combinator::map;
-use nom::IResult;
+use nom::{
+    IResult,
+    combinator::map,
+    character::complete::{char, multispace0},
+    bytes::complete::take_while1,
+    sequence::tuple,
+    multi::separated_list1
+};
 use nom_locate::LocatedSpan;
 
 /// 使用 LocatedSpan 作为字符串输入的包装器
@@ -8,8 +13,8 @@ pub type RawSpan<'a> = LocatedSpan<&'a str>;
 /// 这将使用默认错误类型，但我们将更改后者
 pub type ParseResult<'a, T> = IResult<RawSpan<'a>, T>;
 
-/// 解析列和表的标识符
-pub(crate) fn identifier(i: RawSpan) -> ParseResult<Stirng> {
+/// 解析列名和表名的标识符
+pub(crate) fn identifier(i: RawSpan) -> ParseResult<String> {
     map(
         take_while1(|c: char| c.is_alphanumeric()),
         |s: RawSpan| s.fragment().to_string()
@@ -29,9 +34,14 @@ pub trait Parse<'a>: Sized {
 
 }
 
-/// 解析逗号分割语句
+/// 构造出解析逗号分割语句的函数
 pub(crate) fn comma_sep<'a, O, E, F>(f: F) -> impl FnMut(RawSpan<'a>) -> IResult<RawSpan<'a>, Vec<O>, E>
+    where
+        F: nom::Parser<RawSpan<'a>, O, E>,
+        E: nom::error::ParseError<RawSpan<'a>>
 {
-    
+    // multispace0: 识别零个或多个空格、制表符、回车符和换行符
+    // tuple 语句表示为逐个执行匹配
+    separated_list1(tuple((multispace0, char(','), multispace0)), f)
 }
 
