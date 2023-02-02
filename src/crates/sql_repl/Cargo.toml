@@ -3,7 +3,8 @@ name = "sql_repl"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+# 使用miette的工作区版本，但也使用 fancy 的功能来允许显示错误
+miette = { workspace = true, features = ["fancy"] }
 rustyline = "10.1.1"
+sql_parser = { path = "../sql_parser" }
