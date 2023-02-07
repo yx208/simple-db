@@ -1,6 +1,5 @@
 use miette::Diagnostic;
-use nom_locate::LocatedSpan;
-use nom_supreme::error::{BaseErrorKind, ErrorTree, GenericErrorTree, StackContext};
+use nom_supreme::error::{BaseErrorKind, GenericErrorTree, StackContext};
 use thiserror::Error;
 use crate::parse::MyParseError;
 

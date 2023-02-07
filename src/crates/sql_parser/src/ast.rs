@@ -11,6 +11,7 @@ use crate::commands::{
     SelectStatement,
     InsertStatement
 };
+use crate::error::FormattedError;
 use crate::parse::{Parse, ParseResult, peek_then_cut, RawSpan};
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
@@ -44,6 +45,21 @@ impl<'a> Parse<'a> for SqlQuery {
 
         Ok((rest, query))
     }
+}
+
+impl<'a> TryFrom<&'a str> for SqlQuery {
+    type Error = FormattedError<'a>;
+
+    fn try_from(value: &'a str) -> Result<Self, Self::Error> {
+        match SqlQuery::parse_format_error(value) {
+            Ok(query) => Ok(query),
+            Err(err) => Err(err)
+        }
+    }
+}
+
+pub fn parse_sql_query(input: &str) -> Result<SqlQuery, FormattedError<'_>> {
+    input.try_into()
 }
 
 #[cfg(test)]

@@ -7,4 +7,6 @@ edition = "2021"
 # 使用miette的工作区版本，但也使用 fancy 的功能来允许显示错误
 miette = { workspace = true, features = ["fancy"] }
 rustyline = "10.1.1"
+tabled = "0.10.0"
 sql_parser = { path = "../sql_parser" }
+sql_execution = { path = "../sql_execution" }
